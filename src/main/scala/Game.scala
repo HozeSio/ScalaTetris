@@ -76,24 +76,25 @@ class Game {
         fill <== map(i)(j)
       }
     }
-    currentBlock = getRandomBlock()
-    updateBlock(currentBlock)
+    spawnBlock()
   }
 
   def update() = {
-    while(checkLine()) {
-
-    }
     if (isMovable(currentBlock, 0, 1)) {
       moveBlock(currentBlock, 0, 1)
     }
     else {
-      currentBlock = getRandomBlock()
-      updateBlock(currentBlock)
+      checkLine()
+      spawnBlock()
     }
   }
 
-  def checkLine():Boolean = {
+  def spawnBlock(): Unit = {
+    currentBlock = getRandomBlock()
+    updateBlock(currentBlock)
+  }
+
+  def checkLine():Unit = {
     for(j <- (row-1) to 0 by -1) {
       var isClearLine = true
       for (i <- 0 until column) {
@@ -102,10 +103,9 @@ class Game {
       }
       if (isClearLine) {
         removeLine(j)
-        return true
+        checkLine()
       }
     }
-    return false;
   }
 
   def removeLine(row:Int) = {
@@ -116,6 +116,7 @@ class Game {
         map(col)(r).value = emptyFill
       }
     }
+    currentBlock.py += 1
 
     score += 10
     scoreProperty.value = score.toString
