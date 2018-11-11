@@ -1,3 +1,6 @@
+import java.beans.EventHandler
+
+import javafx.scene.input.KeyCode
 import scalafx.application.{JFXApp, Platform}
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
@@ -7,8 +10,8 @@ import scalafx.scene.layout.HBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{LinearGradient, Stops}
 import scalafx.scene.text.Text
-import scalafx.event.ActionEvent
 import scalafx.Includes._
+import scalafx.beans.property.IntegerProperty
 
 object main extends JFXApp {
 
@@ -20,17 +23,41 @@ object main extends JFXApp {
     height = 800
     scene = new Scene {
       fill = Black
-      content_=(g.board.flatten)
+      content = g.board.flatten
+      val text = new HBox() {
+        layoutX = 530
+        layoutY = 20
+        children = new Text() {
+          text <== g.scoreProperty
+          style = "-fx-font-size: 32pt"
+          fill = White
+        }
+      }
+      content.add(text)
+      onKeyPressed.value = ke => {
+        ke.getCode match {
+          case KeyCode.LEFT => {
+            if (g.isMovable(g.currentBlock,-1,0))
+              g.moveBlock(g.currentBlock,-1, 0)
+          }
+          case KeyCode.RIGHT => {
+            if (g.isMovable(g.currentBlock,1,0))
+              g.moveBlock(g.currentBlock,1,0)
+          }
+          case KeyCode.DOWN => {
+            if (g.isMovable(g.currentBlock,0,1))
+              g.moveBlock(g.currentBlock,0,1)
+          }
+          case _ => {
+
+          }
+        }
+      }
     }
     val timer = new java.util.Timer()
     val task = new java.util.TimerTask {
       override def run(): Unit = {
-        System.out.println("Update")
         g.update()
-        Platform.runLater {
-          System.out.println("runLater")
-          scene.value.content_=(g.board.flatten)
-        }
       }
     }
     timer.schedule(task, 0, 1000)
