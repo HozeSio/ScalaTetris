@@ -1,22 +1,17 @@
 import javafx.scene.paint.Color
-import javafx.scene.paint.Color.rgb
 
-class Block(val shape:Int, val dir:Int, var px:Int, var py:Int) {
+class Block(val shape:Int, var dir:Int, var px:Int, var py:Int) {
   var tiles:Int = BlockShape.getBlock(shape, dir)
 
-  def color:Color = {
-    shape match {
-      case 0 => {
-        rgb(0,255,0)
-      }
-      case _ => {
-        rgb(122,122,0)
-      }
-    }
-  }
+  def color:Color = BlockShape.color(shape)
 
   def hasTileAt(col:Int, row:Int):Boolean = {
-    ((0x8000 >> (col) >> (row * 4)) & tiles) != 0
+    BlockShape.hasTileAt(tiles, col, row)
+  }
+
+  def changeDir(dir:Int): Unit = {
+    this.dir = dir
+    tiles = BlockShape.getBlock(shape, dir)
   }
 }
 
@@ -30,8 +25,27 @@ object BlockShape {
     Array(0x0E40, 0x4C40, 0x4E00, 0x4640),
     Array(0x0C60, 0x4C80, 0xC600, 0x2640)
   )
+  val color = Array(
+    Color.GREEN,
+    Color.BLUE,
+    Color.YELLOW,
+    Color.ORANGE,
+    Color.RED,
+    Color.PURPLE,
+    Color.CYAN
+  )
 
   def getBlock(shape:Int, dir:Int): Int = {
     blocks(shape)(dir)
+  }
+
+  def hasTileAt(shape:Int, col:Int, row:Int):Boolean = {
+    ((0x8000 >> (col) >> (row * 4)) & shape) != 0
+  }
+
+  def isValidRange(col:Int, row:Int):Boolean = {
+    if (col < 0 || col >= 4 || row < 0 || row >= 4)
+      return false
+    return true
   }
 }

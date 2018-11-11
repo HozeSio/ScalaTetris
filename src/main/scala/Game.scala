@@ -12,7 +12,7 @@ class Game {
   val row = 20
   val initialPosX = 4
   val initialPosY = 0
-  val emptyFill = rgb(255,255,255)
+  val emptyFill = Color.LIGHTGRAY
 
   val board = mutable.ArrayBuffer.fill[Rectangle](column, row)(null)
   val map = mutable.ArrayBuffer.fill[ObjectProperty[Paint]](column, row)(null)
@@ -20,23 +20,23 @@ class Game {
   val scoreProperty:StringProperty = StringProperty("0")
   var score = 0
 
-  def isMovable(block:Block, dx:Int, dy:Int):Boolean = {
-    for (r <- 0 until 4; c <- 0 until 4) {
-      breakable {
-        if (block.hasTileAt(c, r) == false) {
-          break
-        }
+  def isMapEmptyAt(col:Int, row:Int):Boolean = {
+    map(col)(row).value == emptyFill
+  }
 
-        val px = block.px + dx + c
-        val py = block.py + dy + r
-        if (py >= row || px < 0 || px >= column) {
-          return false
-        }
-        if (0 <= dx + c && dx + c < 4 && 0 <= dy + r && dy + r < 4
-          && block.hasTileAt(dx + c, dy + r)) {
-          break
-        }
-        if (map(px)(py).value != emptyFill) {
+  def isMovable(block:Block, dx:Int, dy:Int): Boolean = isMovable(block, dx, dy, block.dir)
+  def isMovable(block:Block, dx:Int, dy:Int, dir:Int):Boolean = {
+    val destBlock = new Block(block.shape, dir, block.px + dx, block.py + dy)
+    for (r <- 0 until 4; c <- 0 until 4) {
+      val targetTileX = destBlock.px + c
+      val targetTileY = destBlock.py + r
+      if (destBlock.hasTileAt(c,r)
+          && (targetTileX < 0 || targetTileX >= column || targetTileY < 0 || targetTileY >= row)) {
+        return false
+      }
+      if (destBlock.hasTileAt(c,r) && !isMapEmptyAt(targetTileX, targetTileY)) {
+        if (!BlockShape.isValidRange(targetTileX - block.px, targetTileY - block.py)
+            || !block.hasTileAt(targetTileX - block.px, targetTileY - block.py)) {
           return false
         }
       }
@@ -44,7 +44,8 @@ class Game {
     return true
   }
 
-  def moveBlock(block:Block, dx:Int, dy:Int) = {
+  def moveBlock(block:Block, dx:Int, dy:Int): Unit = moveBlock(block, dx, dy, block.dir)
+  def moveBlock(block:Block, dx:Int, dy:Int, dir:Int): Unit = {
     for (row <- 0 until 4; col <- 0 until 4) {
       if (block.hasTileAt(col, row)) {
         map(block.px + col)(block.py + row).value = emptyFill
@@ -52,6 +53,7 @@ class Game {
     }
     block.px += dx
     block.py += dy
+    block.changeDir(dir)
     updateBlock(block)
   }
 
@@ -120,7 +122,7 @@ class Game {
   }
 
   def getRandomBlock():Block = {
-    val shape = scala.util.Random.nextInt(/*7*/2)
+    val shape = scala.util.Random.nextInt(7)
     new Block(shape, 0, initialPosX, initialPosY)
   }
 }

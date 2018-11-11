@@ -48,6 +48,10 @@ object main extends JFXApp {
             if (g.isMovable(g.currentBlock,0,1))
               g.moveBlock(g.currentBlock,0,1)
           }
+          case KeyCode.UP => {
+            if (g.isMovable(g.currentBlock, 0, 0, (g.currentBlock.dir + 1) % 4))
+              g.moveBlock(g.currentBlock, 0, 0, (g.currentBlock.dir + 1) % 4)
+          }
           case _ => {
 
           }
