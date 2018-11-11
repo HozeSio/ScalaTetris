@@ -21,18 +21,19 @@ class Game {
   var score = 0
 
   def isMovable(block:Block, dx:Int, dy:Int):Boolean = {
-    for (i <- 0 until 4; j <- 0 until 4) {
+    for (r <- 0 until 4; c <- 0 until 4) {
       breakable {
-        if (block.tiles(i)(j) == false)
+        if (block.hasTileAt(c, r) == false) {
           break
+        }
 
-        val px = block.px + dx + i
-        val py = block.py + dy + j
+        val px = block.px + dx + c
+        val py = block.py + dy + r
         if (py >= row || px < 0 || px >= column) {
           return false
         }
-        if (0 <= dx + i && dx + i < 4 && 0 <= dy + j && dy + j < 4
-          && block.tiles(dx + i)(dy + j) == true) {
+        if (0 <= dx + c && dx + c < 4 && 0 <= dy + r && dy + r < 4
+          && block.hasTileAt(dx + c, dy + r)) {
           break
         }
         if (map(px)(py).value != emptyFill) {
@@ -44,24 +45,21 @@ class Game {
   }
 
   def moveBlock(block:Block, dx:Int, dy:Int) = {
-    for (i <- 0 until 4; j <- 0 until 4) {
-      if (block.tiles(i)(j) == true) {
-        map(block.px + i)(block.py + j).value = emptyFill
+    for (row <- 0 until 4; col <- 0 until 4) {
+      if (block.hasTileAt(col, row)) {
+        map(block.px + col)(block.py + row).value = emptyFill
       }
     }
     block.px += dx
     block.py += dy
     updateBlock(block)
-
-    System.out.println(s"Move block $dx $dy")
   }
 
   def updateBlock(block:Block) = {
-    for (i <- 0 until 4; j <- 0 until 4) {
-      val px = block.px + i
-      val py = block.py + j
-      if (block.tiles(i)(j) == true)
-        map(px)(py).value = block.color
+    for (row <- 0 until 4; col <- 0 until 4) {
+      if (block.hasTileAt(col, row)) {
+        map(block.px + col)(block.py+row).value = block.color
+      }
     }
   }
 
@@ -123,6 +121,6 @@ class Game {
 
   def getRandomBlock():Block = {
     val shape = scala.util.Random.nextInt(/*7*/2)
-    new Block(shape, initialPosX, initialPosY)
+    new Block(shape, 0, initialPosX, initialPosY)
   }
 }
