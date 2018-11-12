@@ -1,5 +1,3 @@
-import java.beans.EventHandler
-
 import javafx.scene.input.KeyCode
 import scalafx.application.{JFXApp, Platform}
 import scalafx.application.JFXApp.PrimaryStage
@@ -11,7 +9,6 @@ import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{LinearGradient, Stops}
 import scalafx.scene.text.Text
 import scalafx.Includes._
-import scalafx.beans.property.IntegerProperty
 
 object main extends JFXApp {
 
@@ -25,7 +22,7 @@ object main extends JFXApp {
       fill = Black
       content = g.board.flatten
       val text = new HBox() {
-        layoutX = 530
+        layoutX = 400
         layoutY = 20
         children = new Text() {
           text <== g.scoreProperty

@@ -20,6 +20,26 @@ class Game {
   val scoreProperty:StringProperty = StringProperty("0")
   var score = 0
 
+  def initialize() = {
+    for (i <- 0 until column; j <- 0 until row) {
+      map(i)(j) = ObjectProperty(emptyFill)
+      board(i)(j) = new Rectangle {
+        x = 32 * i + 2 * (i + 1)
+        y = 32 * j + 2 * (j + 1)
+        width = 32
+        height = 32
+        fill <== map(i)(j)
+      }
+    }
+    setScore(0)
+    spawnBlock()
+  }
+
+  def setScore(score:Int): Unit = {
+    this.score = score
+    scoreProperty.value = s"Score : $score"
+  }
+
   def isMapEmptyAt(col:Int, row:Int):Boolean = {
     map(col)(row).value == emptyFill
   }
@@ -65,20 +85,6 @@ class Game {
     }
   }
 
-  def initialize() = {
-    for (i <- 0 until column; j <- 0 until row) {
-      map(i)(j) = ObjectProperty(emptyFill)
-      board(i)(j) = new Rectangle {
-        x = 32 * i + 2 * (i + 1)
-        y = 32 * j + 2 * (j + 1)
-        width = 32
-        height = 32
-        fill <== map(i)(j)
-      }
-    }
-    spawnBlock()
-  }
-
   def update() = {
     if (isMovable(currentBlock, 0, 1)) {
       moveBlock(currentBlock, 0, 1)
@@ -117,9 +123,7 @@ class Game {
       }
     }
     currentBlock.py += 1
-
-    score += 10
-    scoreProperty.value = score.toString
+    setScore(score + 10)
   }
 
   def getRandomBlock():Block = {
