@@ -1,11 +1,7 @@
 import scalafx.scene.shape.Rectangle
 import scalafx.Includes._
-import scalafx.beans.property.{IntegerProperty, ObjectProperty, StringProperty}
+import scalafx.beans.property.{ObjectProperty, StringProperty}
 import javafx.scene.paint.{Color, Paint}
-import javafx.scene.paint.Color._
-
-import scala.util.control.Breaks._
-import scala.collection.mutable
 
 class Game {
   val column = 10
@@ -14,8 +10,8 @@ class Game {
   val initialPosY = 0
   val emptyFill = Color.LIGHTGRAY
 
-  val board = mutable.ArrayBuffer.fill[Rectangle](column, row)(null)
-  val map = mutable.ArrayBuffer.fill[ObjectProperty[Paint]](column, row)(null)
+  val board = Array.fill[Rectangle](column, row)(null)
+  val map = Array.fill[ObjectProperty[Paint]](column, row)(null)
   var currentBlock:Block = null
   val scoreProperty:StringProperty = StringProperty("0")
   var score = 0
