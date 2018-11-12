@@ -12,11 +12,11 @@ class Game {
 
   val board = Array.fill[Rectangle](column, row)(null)
   val map = Array.fill[ObjectProperty[Paint]](column, row)(null)
-  var currentBlock:Block = null
+  var currentBlock:Block = _
   val scoreProperty:StringProperty = StringProperty("0")
   var score = 0
 
-  def initialize() = {
+  def initialize(): Unit = {
     for (i <- 0 until column; j <- 0 until row) {
       map(i)(j) = ObjectProperty(emptyFill)
       board(i)(j) = new Rectangle {
@@ -73,7 +73,7 @@ class Game {
     updateBlock(block)
   }
 
-  def updateBlock(block:Block) = {
+  def updateBlock(block:Block): Unit = {
     for (row <- 0 until 4; col <- 0 until 4) {
       if (block.hasTileAt(col, row)) {
         map(block.px + col)(block.py+row).value = block.color
@@ -81,7 +81,7 @@ class Game {
     }
   }
 
-  def update() = {
+  def update(): Unit = {
     if (isMovable(currentBlock, 0, 1)) {
       moveBlock(currentBlock, 0, 1)
     }
@@ -110,7 +110,7 @@ class Game {
     }
   }
 
-  def removeLine(row:Int) = {
+  def removeLine(row:Int): Unit = {
     for(r <- row to 0 by -1; col <- 0 until column) {
       if (r > 0) {
         map(col)(r).value = map(col)(r - 1).value
